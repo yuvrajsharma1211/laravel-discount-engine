@@ -51,9 +51,10 @@ COPY --from=node_builder /var/www/html/public/build ./public/build
 RUN composer dump-autoload --optimize --no-dev --classmap-authoritative --no-interaction --no-ansi
 
 # Ensure storage and cache are writable
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
+RUN chmod -R 775 storage bootstrap/cache database \
+    && chown -R www-data:www-data storage bootstrap/cache database
 
 RUN touch /var/www/html/database/database.sqlite
 
 EXPOSE 10000
-CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=10000"
+CMD sh -c "chmod -R 775 storage bootstrap/cache database && php artisan config:clear && php artisan view:clear && php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=10000"
