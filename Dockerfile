@@ -57,4 +57,4 @@ RUN chmod -R 775 storage bootstrap/cache database \
 RUN touch /var/www/html/database/database.sqlite
 
 EXPOSE 10000
-CMD sh -c "chmod -R 775 storage bootstrap/cache database && php artisan config:clear && php artisan view:clear && php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=10000"
+CMD sh -c "chmod -R 775 storage bootstrap/cache database && php artisan optimize:clear && php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=10000"
