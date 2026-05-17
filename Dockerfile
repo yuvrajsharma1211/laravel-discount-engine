@@ -16,13 +16,24 @@ RUN npm run build --silent
 
 FROM php:8.2-fpm-alpine
 
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-        icu-dev libzip-dev zlib-dev oniguruma-dev freetype-dev libpng-dev libjpeg-turbo-dev git \
+RUN apk add --no-cache \
+    icu \
+    libzip \
+    libpng \
+    libjpeg-turbo \
+    freetype \
+    icu-dev \
+    libzip-dev \
+    zlib-dev \
+    oniguruma-dev \
+    freetype-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    git \
+    $PHPIZE_DEPS \
     && docker-php-ext-configure intl \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
-    && docker-php-ext-install pdo pdo_mysql zip intl mbstring exif pcntl bcmath opcache gd \
-    && apk del .build-deps \
-    && rm -rf /var/cache/apk/*
+    && docker-php-ext-install pdo pdo_mysql zip intl mbstring exif pcntl bcmath opcache gd
 
 # Provide composer from the composer image
 COPY --from=vendor /usr/bin/composer /usr/bin/composer
@@ -45,4 +56,4 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 RUN touch /var/www/html/database/database.sqlite
 
 EXPOSE 10000
-CMD php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=10000CMD php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=10000
+CMD sh -c "php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=10000"
