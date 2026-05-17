@@ -42,5 +42,7 @@ RUN composer dump-autoload --optimize --no-dev --classmap-authoritative --no-int
 # Ensure storage and cache are writable
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
 
+RUN touch /var/www/html/database/database.sqlite
+
 EXPOSE 10000
 CMD php artisan serve --host=0.0.0.0 --port=10000
